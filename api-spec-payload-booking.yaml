@@ -1,0 +1,253 @@
+openapi: "3.0.0"
+info:
+  title: "Space Payload Booking System"
+  version: "1.0.0"
+  description: "API for managing space payload bookings."
+
+servers:
+  - url: "https://api.internship.appointy.com/space-payload/v1"
+
+paths:
+  /durations/:
+    get:
+      summary: "Get Allowed Durations"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Duration"
+
+  /payloads/:
+    get:
+      summary: "List of Payloads"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Payload"
+
+  /working-hours/:
+    get:
+      summary: "Get Working Hours between a time range for a payload"
+      parameters:
+        - name: "payloadId"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "startTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "endTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/WorkingHour"
+
+  /block-hours/:
+    get:
+      summary: "Get Block Hours between a time range for a payload"
+      parameters:
+        - name: "payloadId"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "startTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "endTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/BlockHour"
+
+  /bookings/:
+    get:
+      summary: "Get Bookings between a time range for a payload"
+      parameters:
+        - name: "payloadId"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "startTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "endTime"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Booking"
+
+  /availability/:
+    get:
+      summary: "Get Available Slots"
+      parameters:
+        - name: "payloadId"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "date"
+          in: "query"
+          required: true
+          schema:
+            type: "string"
+        - name: "duration"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+        - name: "quantity"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Availability"
+
+components:
+  schemas:
+    Duration:
+      type: "object"
+      properties:
+        seconds:
+          type: "integer"
+          description: "Duration in seconds."
+
+    Payload:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "Unique identifier for the payload."
+        name:
+          type: "string"
+          description: "Name of the payload (e.g., RAMBHA)."
+        description:
+          type: "string"
+          description: "Detailed description of the payload."
+
+    WorkingHour:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        resourceId:
+          type: "string"
+          description: "Associated payload ID."
+        quantity:
+          type: "integer"
+          description: "Available quantity of the payload."
+        start_time:
+          type: "string"
+          format: "date-time"
+          description: "Start time for working hours."
+        end_time:
+          type: "string"
+          format: "date-time"
+          description: "End time for working hours."
+
+    BlockHour:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        resourceId:
+          type: "string"
+          description: "Associated payload ID."
+        start_time:
+          type: "string"
+          format: "date-time"
+          description: "Start time for block hours."
+        end_time:
+          type: "string"
+          format: "date-time"
+          description: "End time for block hours."
+
+    Booking:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+        resourceId:
+          type: "string"
+          description: "Associated payload ID."
+        quantity:
+          type: "integer"
+          description: "Quantity booked for the booking."
+        start_time:
+          type: "string"
+          format: "date-time"
+          description: "Start time of the booking."
+        end_time:
+          type: "string"
+          format: "date-time"
+          description: "End time of the booking."
+
+    Availability:
+      type: "object"
+      properties:
+        available_slots:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              start_time:
+                type: "string"
+                format: "date-time"
+              end_time:
+                type: "string"
+                format: "date-time"
+          description: "List of available slots for booking."
+        time_taken:
+          type: "string"
+          description: "Time taken to find the available slots."
+
